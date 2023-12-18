@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="styles.css">
+  <script defer src="login.js"></script>
+  <script src="https://kit.fontawesome.com/c9e868ff59.js" crossorigin="anonymous"></script>
+  <title>Login</title>
+</head>
+<body>
+  <div class="form-box">
+    <form class="form" method="post">
+        <span class="title">Login</span>
+        <span class="subtitle">Fill in details to login.</span>
+        <div class="form-container">
+          <span class="errors" id="server_error"></span>
+          <span class="errors" id="username_error"></span>
+          <input type="text" class="input" id="username" name="username" placeholder="Username">
+          <span class="errors" id="password_error"></span>
+          <input type="password" class="input" id="password" name="username" placeholder="Password">
+          <i id="toggle" class="fa-solid fa-eye toggle"></i>
+        </div>
+        <button id="loginBtn">log in</button>
+        <div id="dot-spinner" class="dot-spinner">
+          <div class="dot-spinner__dot"></div>
+          <div class="dot-spinner__dot"></div>
+          <div class="dot-spinner__dot"></div>
+          <div class="dot-spinner__dot"></div>
+          <div class="dot-spinner__dot"></div>
+          <div class="dot-spinner__dot"></div>
+          <div class="dot-spinner__dot"></div>
+          <div class="dot-spinner__dot"></div>
+      </div>
+    </form>
+    <div class="form-section">
+      <p>Don't have an account? <a href="/register">Sign up</a> </p>
+    </div>
+    </div>
+</body>
+</html>

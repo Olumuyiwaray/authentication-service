@@ -1,0 +1,230 @@
+* {
+    margin: 0;
+  }
+  
+  body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100svh;
+    z-index: 999;
+  }
+  
+  
+  .form-box {
+    max-width: 300px;
+    background: #f1f7fe;
+    overflow: hidden;
+    border-radius: 16px;
+    color: #010101;
+    box-sizing: border-box;
+  }
+  
+  .form {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    padding: 32px 24px 24px;
+    gap: 16px;
+    /*text-align: center;*/
+    box-sizing: border-box;
+  }
+  
+  /*Form text*/
+  .title {
+    font-weight: bold;
+    font-size: 1.6rem;
+    text-align: center;
+  }
+  
+  .subtitle {
+    font-size: 1rem;
+    color: #666;
+    text-align: center;
+  }
+  
+  /*Inputs box*/
+  .form-container {
+    overflow: hidden;
+    border-radius: 8px;
+    /*background-color: #fff;*/
+    margin: 1rem 0 .5rem;
+    width: 100%;
+    box-sizing: border-box;
+  }
+  
+  .input {
+    background: none;
+    border: 0;
+    outline: 0;
+    height: 40px;
+    width: 100%;
+    background-color: #fff;
+    border-bottom: 1px solid #eee;
+    font-size: .9rem;
+    padding: 8px 15px;
+    margin: 10px 0;
+  }
+  
+  .form-section {
+    padding: 16px;
+    font-size: .85rem;
+    background-color: #e0ecfb;
+    box-shadow: rgb(0 0 0 / 8%) 0 -1px;
+  }
+  
+  .form-section a {
+    font-weight: bold;
+    color: #0066ff;
+    transition: color .3s ease;
+  }
+  
+  .form-section a:hover {
+    color: #005ce6;
+    text-decoration: underline;
+  }
+  
+  /*Button*/
+  .form button {
+    background-color: #0066ff;
+    color: #fff;
+    border: 0;
+    border-radius: 24px;
+    padding: 10px 16px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color .3s ease;
+  }
+  
+  .form button:hover {
+    background-color: #005ce6;
+  }
+  
+  .errors {
+    font-size: 12px;
+    color: red;
+    margin: 0;
+    text-align: left !important;
+  }
+  
+  .toggle {
+    color: lightslategray;
+    position: absolute;
+    right: 40px;
+    bottom: 120px;
+  }
+  .toggle:hover {
+    cursor: pointer;
+  }
+
+  .dot-spinner {
+    --uib-size: 3rem;
+    --uib-speed: .9s;
+    --uib-color: #191853;
+    position: absolute;
+    display:none;
+    align-items: center;
+    justify-content: flex-start;
+    height: var(--uib-size);
+    width: var(--uib-size);
+    right: 130px;
+    bottom: 170px;
+    z-index: 1000;
+  }
+  
+  .dot-spinner__dot {
+    position: absolute;
+    top: 0;
+    left: 0;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    height: 100%;
+    width: 100%;
+  }
+  
+  .dot-spinner__dot::before {
+    content: '';
+    height: 20%;
+    width: 20%;
+    border-radius: 50%;
+    background-color: var(--uib-color);
+    transform: scale(0);
+    opacity: 0.5;
+    animation: pulse0112 calc(var(--uib-speed) * 1.111) ease-in-out infinite;
+    box-shadow: 0 0 20px rgba(18, 31, 53, 0.3);
+  }
+  
+  .dot-spinner__dot:nth-child(2) {
+    transform: rotate(45deg);
+  }
+  
+  .dot-spinner__dot:nth-child(2)::before {
+    animation-delay: calc(var(--uib-speed) * -0.875);
+  }
+  
+  .dot-spinner__dot:nth-child(3) {
+    transform: rotate(90deg);
+  }
+  
+  .dot-spinner__dot:nth-child(3)::before {
+    animation-delay: calc(var(--uib-speed) * -0.75);
+  }
+  
+  .dot-spinner__dot:nth-child(4) {
+    transform: rotate(135deg);
+  }
+  
+  .dot-spinner__dot:nth-child(4)::before {
+    animation-delay: calc(var(--uib-speed) * -0.625);
+  }
+  
+  .dot-spinner__dot:nth-child(5) {
+    transform: rotate(180deg);
+  }
+  
+  .dot-spinner__dot:nth-child(5)::before {
+    animation-delay: calc(var(--uib-speed) * -0.5);
+  }
+  
+  .dot-spinner__dot:nth-child(6) {
+    transform: rotate(225deg);
+  }
+  
+  .dot-spinner__dot:nth-child(6)::before {
+    animation-delay: calc(var(--uib-speed) * -0.375);
+  }
+  
+  .dot-spinner__dot:nth-child(7) {
+    transform: rotate(270deg);
+  }
+  
+  .dot-spinner__dot:nth-child(7)::before {
+    animation-delay: calc(var(--uib-speed) * -0.25);
+  }
+  
+  .dot-spinner__dot:nth-child(8) {
+    transform: rotate(315deg);
+  }
+  
+  .dot-spinner__dot:nth-child(8)::before {
+    animation-delay: calc(var(--uib-speed) * -0.125);
+  }
+  
+  @keyframes pulse0112 {
+    0%,
+    100% {
+      transform: scale(0);
+      opacity: 0.5;
+    }
+  
+    50% {
+      transform: scale(1);
+      opacity: 1;
+    }
+  }
+  .dimmed {
+    opacity: 0.5;
+    pointer-events: none;
+  }

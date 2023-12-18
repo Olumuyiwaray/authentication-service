@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="styles.css">
+  <script defer src="register.js"></script>
+  <script src="https://kit.fontawesome.com/c9e868ff59.js" crossorigin="anonymous"></script>
+  <title> Register </title>
+</head>
+<body>
+  <div class="form-box">
+    <form class="form" method="post">
+        <span class="title">Sign up</span>
+        <span class="subtitle">Create a free account with your email.</span>
+        <div class="form-container">
+          <span class="errors" id="server_error"></span>
+          <span class="errors" id="email_error"></span>
+          <input type="text" class="input" name="email" id="email" placeholder="Email">
+          <span class="errors" id="username_error"></span>
+          <input type="text" class="input" name="username" id="username" placeholder="Username">
+          <span class="errors" id="password_error"></span>
+          <input type="password" class="input" name="password" id="password" placeholder="Password">
+          <i id="toggle" class="fa-solid fa-eye toggle"></i>
+        </div>
+        <button id="signupBtn">Sign up</button>
+        <div id="dot-spinner" class="dot-spinner">
+          <div class="dot-spinner__dot"></div>
+          <div class="dot-spinner__dot"></div>
+          <div class="dot-spinner__dot"></div>
+          <div class="dot-spinner__dot"></div>
+          <div class="dot-spinner__dot"></div>
+          <div class="dot-spinner__dot"></div>
+          <div class="dot-spinner__dot"></div>
+          <div class="dot-spinner__dot"></div>
+      </div>
+    </form>
+    <div class="form-section">
+      <p>Have an account? <a href="/">Log in</a> </p>
+    </div>
+    </div>
+</body>
+</html>
