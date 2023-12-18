@@ -39,7 +39,7 @@ router.get('/logout', checkAuthenticated, (req, res) => {
 });
 
 router.get('/welcome', checkAuthenticated, (req, res) => {
-  res.status(200).render('welcome');
+  res.status(200).render('welcome', { username: req.user.username });
 });
 
 router.get('/register', (req, res) => {
@@ -130,7 +130,7 @@ router.post('/login', validateLogin, validate, (req, res, next) => {
       if (err) {
         return next(err);
       }
-      return res.redirect('/welcome', { username: user.username });
+      return res.redirect('/welcome');
     });
   })(req, res, next);
 });
