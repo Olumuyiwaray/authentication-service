@@ -1,5 +1,5 @@
 {
-  "name": "authentication-app",
+  "name": "authentication-service",
   "version": "1.0.0",
   "description": "\"A simple register, login and logout app\"",
   "main": "app.js",
