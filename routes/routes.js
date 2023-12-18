@@ -130,7 +130,7 @@ router.post('/login', validateLogin, validate, (req, res, next) => {
       if (err) {
         return next(err);
       }
-      return res.redirect('/welcome');
+      return res.redirect('/welcome', { username: user.username });
     });
   })(req, res, next);
 });
