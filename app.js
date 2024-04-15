@@ -27,6 +27,7 @@ const limiter = rateLimiter({
 });
 
 app.use(limiter);
+app.use(helmet());
 
 // Configure express-sessions
 app.use(
