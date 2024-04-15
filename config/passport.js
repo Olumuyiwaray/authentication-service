@@ -31,6 +31,7 @@ passport.serializeUser(function (user, cb) {
 passport.deserializeUser(function (userId, cb) {
   User.findById(userId)
     .then((user) => {
+      user.password = undefined;
       cb(null, user);
     })
     .catch((err) => cb(err));
