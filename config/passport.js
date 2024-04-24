@@ -1,12 +1,13 @@
 const passport = require('passport');
 const User = require('../model/users');
 const passportLocal = require('./passortLocal');
-//const passportGoogle = require('./passportGoogle');
-//const passportTwitter = require('./passportTwitter');
-//const passportFacebook = require('./passportFacebook');
+const passportGoogle = require('./passportGoogle');
+const passportTwitter = require('./passportTwitter');
+const passportFacebook = require('./passportFacebook');
 
 passport.use(passportLocal);
-// passport.use(passportTwitter);
+passport.use(passportGoogle);
+//passport.use(passportTwitter);
 //passport.use(passportFacebook);
 
 passport.serializeUser(function (user, cb) {

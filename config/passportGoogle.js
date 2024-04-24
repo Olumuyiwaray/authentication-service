@@ -1,5 +1,4 @@
 const GoogleStrategy = require('passport-google-oauth20');
-const passport = require('passport');
 
 const User = require('../model/users');
 
@@ -10,10 +9,8 @@ const passportGoogle = new GoogleStrategy(
     callbackURL: process.env.GOOGLE_CALLBACK
   },
   (accessToken, refreshToken, profile, cb) => {
-    return cb(null, profile);
+    console.log(accessToken, refreshToken, profile);
   }
 );
 
-passport.use(passportGoogle);
-
-//module.exports = passportGoogle;
+module.exports = passportGoogle;
