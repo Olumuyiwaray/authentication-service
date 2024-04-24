@@ -2,8 +2,8 @@ const passport = require('passport');
 const User = require('../model/users');
 const passportLocal = require('./passortLocal');
 //const passportGoogle = require('./passportGoogle');
-const passportTwitter = require('./passportTwitter');
-const passportFacebook = require('./passportFacebook');
+//const passportTwitter = require('./passportTwitter');
+//const passportFacebook = require('./passportFacebook');
 
 passport.use(passportLocal);
 // passport.use(passportTwitter);
