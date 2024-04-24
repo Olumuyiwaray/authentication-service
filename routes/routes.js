@@ -69,6 +69,48 @@ router.get('/verify/:token', async (req, res) => {
   }
 });
 
+// google sign-in
+
+router.get(
+  '/auth/google',
+  passport.authenticate('google', { scope: ['profile'] })
+);
+
+router.get(
+  '/auth/google/callback',
+  passport.authenticate('google', { failureRedirect: '/login' }),
+  function (req, res) {
+    // Successful authentication, redirect home.
+    res.redirect('/welcome');
+  }
+);
+
+// facebook sign-in
+
+router.get('/auth/facebook', passport.authenticate('facebook'));
+
+router.get(
+  '/auth/facebook/callback',
+  passport.authenticate('facebook', { failureRedirect: '/login' }),
+  function (req, res) {
+    // Successful authentication, redirect home.
+    res.redirect('/welcome');
+  }
+);
+
+// twitter sign-in
+
+router.get('/auth/twitter', passport.authenticate('twitter'));
+
+router.get(
+  '/auth/twiter/callback',
+  passport.authenticate('twitter', { failureRedirect: '/login' }),
+  function (req, res) {
+    // Successful authentication, redirect home.
+    res.redirect('/welcome');
+  }
+);
+
 /*
  ** ------------- Post Routes -------------
  */

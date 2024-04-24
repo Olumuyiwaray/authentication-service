@@ -27,7 +27,11 @@ const limiter = rateLimiter({
 });
 
 app.use(limiter);
-app.use(helmet());
+app.use(
+  helmet({
+    contentSecurityPolicy: false
+  })
+);
 
 // Configure express-sessions
 app.use(
@@ -63,5 +67,11 @@ require('./config/passport');
 
 app.use(passport.initialize());
 app.use(passport.session());
+
+app.use((req, res, next) => {
+  console.log(req.session);
+  console.log(req.user);
+  next();
+});
 
 app.use(routes);
