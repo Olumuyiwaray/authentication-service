@@ -7,7 +7,7 @@ const passportLocal = require('./passortLocal');
 
 passport.use(passportLocal);
 // passport.use(passportTwitter);
-passport.use(passportFacebook);
+//passport.use(passportFacebook);
 
 passport.serializeUser(function (user, cb) {
   cb(null, user.id);
