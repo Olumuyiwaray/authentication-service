@@ -73,16 +73,15 @@ router.get('/verify/:token', async (req, res) => {
 
 router.get(
   '/auth/google',
-  passport.authenticate('google', { scope: ['profile'] })
+  passport.authenticate('google', { scope: ['profile', 'email'] })
 );
 
 router.get(
   '/auth/google/callback',
   passport.authenticate('google', { failureRedirect: '/login' }),
   function (req, res) {
-    // Successful authentication, redirect home.
-    //res.redirect('/welcome');
-    res.json(req.user);
+    //Successful authentication, redirect home.
+    res.redirect('/welcome');
   }
 );
 

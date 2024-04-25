@@ -16,7 +16,15 @@ const userSchema = new Schema(
       unique: true
     },
     password: {
-      type: String
+      type: String,
+      required: function () {
+        return this.auth_method === 'traditional';
+      },
+      auth_method: {
+        type: String,
+        enum: ['traditional', 'google', 'facebook', 'twitter'],
+        required: true
+      }
     },
     verified: {
       type: Boolean,
