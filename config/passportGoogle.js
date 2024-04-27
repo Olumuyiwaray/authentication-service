@@ -1,5 +1,6 @@
 const GoogleStrategy = require('passport-google-oauth20');
 const User = require('../model/users');
+const { generateUsername } = require('./utils');
 
 const passportGoogle = new GoogleStrategy(
   {
@@ -11,9 +12,10 @@ const passportGoogle = new GoogleStrategy(
     const user = await User.findOne({ email: profile.email });
 
     if (!user) {
+      const username = await generateUsername(profile.displayName);
       const newUser = await User.create({
         email: profile.email,
-        username: '',
+        username: username,
         auth_method: 'google',
         verified: true
       });

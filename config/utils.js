@@ -46,10 +46,30 @@ const checkAuthenticated = (req, res, next) => {
   }
 };
 
+const generateUsername = async (displayName) => {
+  const name = displayName || 'User';
+
+  const usernameBase = name.replace(/\s+/g, '').toLowerCase();
+
+  let username = usernameBase;
+  let counter = 1;
+
+  while (true) {
+    const existingUser = await User.findOne({ username });
+    if (!existingUser) {
+      break;
+    }
+
+    username = `${usernameBase}${counter}`;
+    counter++;
+  }
+  return username;
+};
 module.exports = {
   hashPassword,
   checkPassword,
   createToken,
   sendVerifyLink,
-  checkAuthenticated
+  checkAuthenticated,
+  generateUsername
 };
