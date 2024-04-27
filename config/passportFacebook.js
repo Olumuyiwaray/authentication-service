@@ -13,10 +13,11 @@ const passportFacebook = new FacebookStrategy(
     const user = await User.findOne({ email });
 
     if (!user) {
+      const username = await generateUsername(profile.displayName);
       const newUser = await User.create({
         email: email,
-        username: 'google username',
-        auth_method: 'google',
+        username: username,
+        auth_method: 'facebook',
         verified: true
       });
       return cb(null, newUser);
