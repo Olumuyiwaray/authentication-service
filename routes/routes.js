@@ -12,7 +12,8 @@ const {
   hashPassword,
   createToken,
   sendVerifyLink,
-  checkAuthenticated
+  checkAuthenticated,
+  genSalt
 } = require('../config/utils');
 
 const {
@@ -27,15 +28,6 @@ const {
 
 router.get('/', (req, res) => {
   res.status(200).render('login');
-});
-
-router.get('/logout', checkAuthenticated, (req, res) => {
-  req.logout((err) => {
-    if (err) {
-      console.log(err);
-    }
-    res.status(301).redirect('/');
-  });
 });
 
 router.get('/welcome', checkAuthenticated, (req, res) => {
@@ -69,6 +61,34 @@ router.get('/verify/:token', async (req, res) => {
   }
 });
 
+router.get('/users/:id', checkAuthenticated, async (req, res) => {
+  try {
+    const userId = req.params.id;
+
+    const user = await User.findById(userId);
+
+    if (!user) {
+      res.status().json({ message: '' });
+    }
+    if (user.auth_method === 'traditional') {
+      user.password = undefined;
+      user.salt = undefined;
+    }
+    res.status(200).json({ user });
+  } catch (error) {
+    req.status(500).json({ message: '' });
+  }
+});
+
+router.get('/logout', checkAuthenticated, (req, res) => {
+  req.logout((err) => {
+    if (err) {
+      console.log(err);
+    }
+    res.status(301).redirect('/');
+  });
+});
+
 // google sign-in
 
 router.get(
@@ -98,19 +118,6 @@ router.get(
   }
 );
 
-// twitter sign-in
-
-router.get('/auth/twitter', passport.authenticate('twitter'));
-
-router.get(
-  '/auth/twiter/callback',
-  passport.authenticate('twitter', { failureRedirect: '/login' }),
-  function (req, res) {
-    // Successful authentication, redirect home.
-    res.redirect('/welcome');
-  }
-);
-
 /*
  ** ------------- Post Routes -------------
  */
@@ -130,13 +137,16 @@ router.post('/register', validateSignup, validate, async (req, res) => {
   }
 
   // Create password hash with hash function
-  const hash = await hashPassword(password);
+  const salt = await genSalt();
+  const hash = await hashPassword(password, salt);
 
   // Create user instance from form input
   const newUser = new User({
     email,
     username,
-    password: hash
+    password: hash,
+    salt,
+    auth_method: 'traditional'
   });
 
   newUser

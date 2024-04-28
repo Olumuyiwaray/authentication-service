@@ -1,18 +1,55 @@
-const bcrypt = require('bcrypt');
 const crypto = require('crypto');
 const transporter = require('./nodemailer');
+const User = require('../model/users');
 require('dotenv').config();
 
 // Function for hashing password
+const genSalt = async () => {
+  return new Promise((resolve, reject) => {
+    crypto.randomBytes(16, (err, buffer) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(buffer.toString('hex'));
+      }
+    });
+  });
+};
 
-const hashPassword = async (password) => {
-  return await bcrypt.hash(password, 10);
+const hashPassword = async (password, salt) => {
+  return new Promise((resolve, reject) => {
+    if (password.trim() === '' || salt.trim() === '') {
+      reject(new Error('Password and salt must not be empty.'));
+    } else {
+      crypto.pbkdf2(password, salt, 10000, 64, 'sha512', (err, derivedKey) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(derivedKey.toString('hex'));
+        }
+      });
+    }
+  });
 };
 
 // Function for checking password
 
-const checkPassword = async (password, hashPassword) => {
-  return await bcrypt.compare(password, hashPassword);
+const comparePassword = async (password, hashedPassword, salt) => {
+  if (password.trim() === '' || salt.trim() === '') {
+    throw new Error('Password and salt must not be empty.');
+  }
+
+  if (!hashedPassword) {
+    throw new Error('Hashed password must not be empty.');
+  }
+
+  const hashedInputPassword = await hashPassword(password, salt);
+
+  if (!hashedInputPassword) {
+    throw new Error('Error hashing the password.');
+  }
+
+  return hashedInputPassword === hashedPassword;
 };
 
 // Function to create verification token
@@ -66,8 +103,9 @@ const generateUsername = async (displayName) => {
   return username;
 };
 module.exports = {
+  genSalt,
   hashPassword,
-  checkPassword,
+  comparePassword,
   createToken,
   sendVerifyLink,
   checkAuthenticated,

@@ -1,6 +1,6 @@
 const LocalStrategy = require('passport-local');
 const User = require('../model/users');
-const { checkPassword } = require('./utils');
+const { comparePassword } = require('./utils');
 
 const passportLocal = new LocalStrategy((username, password, cb) => {
   // Find user in database using username provided during login
@@ -10,7 +10,7 @@ const passportLocal = new LocalStrategy((username, password, cb) => {
         return cb(null, false, { message: 'Invalid username or password' });
       }
       // Check for password validity
-      const isValid = await checkPassword(password, user.password);
+      const isValid = await comparePassword(password, user.password, user.salt);
       if (!isValid) {
         return cb(null, false, { message: 'Invalid username or password' });
       }

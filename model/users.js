@@ -19,12 +19,17 @@ const userSchema = new Schema(
       type: String,
       required: function () {
         return this.auth_method === 'traditional';
-      },
-      auth_method: {
-        type: String,
-        enum: ['traditional', 'google', 'facebook', 'twitter'],
-        required: true
       }
+    },
+    salt: {
+      type: String,
+      required: function () {
+        return this.auth_method === 'traditional';
+      }
+    },
+    auth_method: {
+      type: String,
+      required: true
     },
     verified: {
       type: Boolean,

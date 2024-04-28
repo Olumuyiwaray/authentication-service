@@ -1,13 +1,11 @@
 const passport = require('passport');
 const User = require('../model/users');
-const passportLocal = require('./passortLocal');
+const passportLocal = require('./passportLocal');
 const passportGoogle = require('./passportGoogle');
-const passportTwitter = require('./passportTwitter');
 const passportFacebook = require('./passportFacebook');
 
 passport.use(passportLocal);
 passport.use(passportGoogle);
-passport.use(passportTwitter);
 passport.use(passportFacebook);
 
 passport.serializeUser(function (user, cb) {
@@ -17,7 +15,10 @@ passport.serializeUser(function (user, cb) {
 passport.deserializeUser(function (userId, cb) {
   User.findById(userId)
     .then((user) => {
-      user.password = undefined;
+      if ('password' in user && 'salt' in user) {
+        user.password = undefined;
+        user.salt = undefined;
+      }
       cb(null, user);
     })
     .catch((err) => cb(err));

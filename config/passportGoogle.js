@@ -9,13 +9,14 @@ const passportGoogle = new GoogleStrategy(
     callbackURL: process.env.GOOGLE_CALLBACK
   },
   async (accessToken, refreshToken, profile, cb) => {
-    const user = await User.findOne({ email: profile.email });
+    const email = profile.emails[0].value;
+    const user = await User.findOne({ email });
 
     if (!user) {
       const username = await generateUsername(profile.displayName);
       const newUser = await User.create({
-        email: profile.email,
-        username: username,
+        email,
+        username,
         auth_method: 'google',
         verified: true
       });

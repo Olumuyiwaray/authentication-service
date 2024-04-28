@@ -9,6 +9,7 @@ const rateLimiter = require('express-rate-limit');
 const passport = require('passport');
 const dbConfig = require('./config/mongoconnect');
 const routes = require('./routes/routes');
+const mongoUri = require('./config/config');
 const port = process.env.PORT || 4000;
 
 app.use(bodyParser.json());
@@ -40,7 +41,7 @@ app.use(
     resave: false,
     saveUninitialized: true,
     store: MongoStore.create({
-      mongoUrl: process.env.MONGODB_URI,
+      mongoUrl: mongoUri,
       ttl: 1 * 24 * 60 * 60,
       autoRemove: 'native'
     }),
