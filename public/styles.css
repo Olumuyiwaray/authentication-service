@@ -130,16 +130,17 @@ body {
   border-radius: 5px;
 }
 
-.social_link:nth-child(3) {
-  background-color: #000000;
-  border: none;
-  border-radius: 5px;
-}
-
 .social_container {
   display: flex;
   flex-direction: column;
-  
+}
+
+.sso_link {
+  text-decoration: none;
+  background-color: #0066ff;
+  color: #f1f7fe;
+  border: none;
+  border-radius: 5px;
 }
 
 .toggle {

@@ -30,7 +30,16 @@ router.get('/', (req, res) => {
   res.status(200).render('login');
 });
 
+router.get('/social-login', (req, res) => {
+  const { message, provider } = req.query;
+  res.status(200).render('sso', { message, provider });
+});
+
 router.get('/welcome', checkAuthenticated, (req, res) => {
+  res.status(200).render('welcome', { username: req.user.username });
+});
+
+router.get('/social-login', (req, res) => {
   res.status(200).render('welcome', { username: req.user.username });
 });
 
@@ -136,7 +145,7 @@ router.post('/register', validateSignup, validate, async (req, res) => {
   const checkUser = await User.findOne({ email });
 
   if (checkUser) {
-    res.json({ message: 'Email already registered' });
+    return res.json({ message: 'Email already registered' });
   }
 
   // Create password hash with hash function
@@ -174,6 +183,20 @@ router.post('/login', validateLogin, validate, (req, res, next) => {
   passport.authenticate('local', (err, user, info) => {
     if (err) {
       return console.log(err);
+    }
+
+    if (!user && info.message === 'This account uses google login') {
+      const provider = 'google';
+      return res.redirect(
+        `/social-login?message=${info.message}&provide=${provider}`
+      );
+    }
+
+    if (!user && info.message === 'This account uses facebook login') {
+      const provider = 'facebook';
+      return res.redirect(
+        `/social-login?message=${info.message}&provide=${provider}`
+      );
     }
 
     if (!user) {

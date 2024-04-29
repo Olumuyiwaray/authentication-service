@@ -69,22 +69,16 @@ const handleLogin = (e) => {
       .then(async (response) => {
         if (response.redirected) {
           window.location.replace(response.url);
+          return;
         }
         const package = await response.json();
-        if (package.message) {
-          document.body.classList.remove('dimmed');
-          getUsername.disabled = false;
-          getPassword.disabled = false;
-          loginButton.disabled = false;
-          document.getElementById('dot-spinner').style.display = 'none';
-          document.getElementById('server_error').innerText = package.message;
-        }
-        toggle.removeEventListener('click', handleToggle);
-        getUsername.removeEventListener('input', handleUsername);
 
-        getPassword.removeEventListener('input', handlePassword);
-
-        loginButton.removeEventListener('click', handleLogin);
+        document.body.classList.remove('dimmed');
+        getUsername.disabled = false;
+        getPassword.disabled = false;
+        loginButton.disabled = false;
+        document.getElementById('dot-spinner').style.display = 'none';
+        document.getElementById('server_error').innerText = package.message;
       })
       .catch((err) => {
         console.log(err);

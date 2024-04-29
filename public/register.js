@@ -81,7 +81,6 @@ const handleSignup = (e) => {
       username,
       password
     };
-    console.log(data);
     fetch('/register', {
       method: 'post',
       body: JSON.stringify(data),
@@ -92,30 +91,17 @@ const handleSignup = (e) => {
       .then(async (response) => {
         if (response.redirected) {
           window.location.replace(response.url);
+          return;
         }
+
         const package = await response.json();
-        if (package.message) {
-          document.body.classList.remove('dimmed');
-          getEmail.disabled = false;
-          getUsername.disabled = false;
-          getPassword.disabled = false;
-          signupButton.disabled = false;
-          document.getElementById('dot-spinner').style.display = 'none';
-          document.getElementById('server_error').innerText = package.message;
-        }
-        if (package.error) {
-          document.getElementById('server_error').innerText =
-            package.error[0].msg;
-        }
-        toggle.removeEventListener('click', handleToggle);
-
-        getEmail.removeEventListener('input', handleEmail);
-
-        getUsername.removeEventListener('input', handleUsername);
-
-        getPassword.removeEventListener('input', handlePassword);
-
-        signupButton.removeEventListener('click', handleSignup);
+        document.body.classList.remove('dimmed');
+        getEmail.disabled = false;
+        getUsername.disabled = false;
+        getPassword.disabled = false;
+        signupButton.disabled = false;
+        document.getElementById('dot-spinner').style.display = 'none';
+        document.getElementById('server_error').innerText = package.message;
       })
       .catch((err) => console.log(err));
   }
