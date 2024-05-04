@@ -17,7 +17,8 @@ const passportGoogle = new GoogleStrategy(
       const newUser = await User.create({
         email,
         username,
-        auth_method: 'google',
+        auth_method: 'oauth',
+        provider: 'google',
         verified: true
       });
       return cb(null, newUser);

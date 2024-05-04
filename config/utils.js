@@ -61,12 +61,12 @@ const createToken = async (length) => {
 };
 
 // Function to send verification link
-const sendVerifyLink = async (user, verificationLink) => {
+const sendVerifyLink = async (user, subject, message) => {
   const mailOptions = {
     from: process.env.EMAIL,
     to: user.email,
-    subject: 'Verify email address',
-    text: `Click link to verify email address:${verificationLink}`
+    subject: subject,
+    html: message
   };
   await transporter.sendMail(mailOptions);
 };
@@ -102,6 +102,7 @@ const generateUsername = async (displayName) => {
   }
   return username;
 };
+
 module.exports = {
   genSalt,
   hashPassword,

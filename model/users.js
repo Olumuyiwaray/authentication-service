@@ -6,7 +6,9 @@ const userSchema = new Schema(
   {
     email: {
       type: String,
-      required: true,
+      required: function () {
+        return this.auth_method === 'traditional';
+      },
       unique: true,
       lowercase: true
     },
@@ -30,6 +32,12 @@ const userSchema = new Schema(
     auth_method: {
       type: String,
       required: true
+    },
+    provider: {
+      type: String,
+      required: function () {
+        return this.auth_method === 'oauth';
+      }
     },
     verified: {
       type: Boolean,

@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <div>
+      <p>Enter new password</p>
+      <form action="/reset/<%= id %>" method="post">
+        <input
+          type="password"
+          name="password"
+          id="password"
+          placeholder="Password"
+        />
+        <input
+          type="password"
+          name="confirm_password"
+          id="confirm_password"
+          placeholder="confirm_password"
+        />
+        <input type="submit" value="Reset" />
+      </form>
+    </div>
+  </body>
+</html>

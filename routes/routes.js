@@ -1,92 +1,87 @@
 const express = require('express');
-
 const router = express.Router();
-
 const passport = require('passport');
-
-const User = require('../model/users');
-
-const Token = require('../model/emailtoken');
-
-const {
-  hashPassword,
-  createToken,
-  sendVerifyLink,
-  checkAuthenticated,
-  genSalt
-} = require('../config/utils');
-
-const {
-  validate,
-  validateLogin,
-  validateSignup
-} = require('../config/validate');
+const { checkAuthenticated } = require('../config/utils');
+const validator = require('../config/validate');
+const authController = require('../controllers/authControllers');
 
 /*
- ** ---------------- Get routes ---------------
+ ** ------------- Get Routes -------------
  */
 
+// ------- login page ------- //
 router.get('/', (req, res) => {
   res.status(200).render('login');
 });
 
+// ------- social login redirect page ------- //
 router.get('/social-login', (req, res) => {
   const { message, provider } = req.query;
   res.status(200).render('sso', { message, provider });
 });
 
+// ------- dashboard page ------- //
 router.get('/welcome', checkAuthenticated, (req, res) => {
   res.status(200).render('welcome', { username: req.user.username });
 });
 
-router.get('/social-login', (req, res) => {
-  res.status(200).render('welcome', { username: req.user.username });
-});
-
+// ------- register page ------- //
 router.get('/register', (req, res) => {
   res.status(200).render('register');
 });
 
+// ------- get verify notice page ------- //
 router.get('/verify-page', (req, res) => {
   res.status(200).render('verify-page');
 });
 
-router.get('/verify/:token', async (req, res) => {
-  const token = req.params.token;
+// ------- Handle email verification ------- //
+router.get('/verify/:token', authController.verifyUserEmail);
 
-  const findToken = await Token.findOne({ token });
-  const id = findToken.userId;
+//------- google sign-in -------//
+router.get(
+  '/auth/google',
+  passport.authenticate('google', { scope: ['profile', 'email'] })
+);
 
-  const dataUpdate = {
-    verified: true
-  };
-
-  const newUser = await User.findByIdAndUpdate(id, dataUpdate, { new: true });
-
-  if (!newUser) {
-    res.send('sorry an error occured');
-  } else {
-    res.status(200).render('success-reg');
+// ------- google SSO callback url ------- //
+router.get(
+  '/auth/google/callback',
+  passport.authenticate('google', { failureRedirect: '/login' }),
+  function (req, res) {
+    //Successful authentication, redirect home.
+    res.redirect('/welcome');
   }
+);
+
+//------ facebook sign-in --------//
+router.get(
+  '/auth/facebook',
+  passport.authenticate('facebook', { scope: ['email'] })
+);
+
+// google SSO callback url //
+router.get(
+  '/auth/facebook/callback',
+  passport.authenticate('facebook', { failureRedirect: '/login' }),
+  function (req, res) {
+    // Successful authentication, redirect home.
+    res.redirect('/welcome');
+  }
+);
+
+//  get verify password page //
+router.get('/forgot', (req, res) => {
+  res.status(200).render('forgot');
 });
 
-router.get('/users/:id', checkAuthenticated, async (req, res) => {
-  try {
-    const userId = req.params.id;
+//  handle password reset link //
+router.get('/forgot/:token', authController.verifyPasswordResetLink);
 
-    const user = await User.findById(userId);
-
-    if (!user) {
-      res.status().json({ message: '' });
-    }
-    if (user.auth_method === 'traditional') {
-      user.password = undefined;
-      user.salt = undefined;
-    }
-    res.status(200).json({ user });
-  } catch (error) {
-    req.status(500).json({ message: '' });
-  }
+//  get password reset page //
+router.get('/reset/:id', (req, res, next) => {
+  const id = req.params.id;
+  res.status(200).render('reset', { id });
 });
 
 router.get('/logout', checkAuthenticated, (req, res) => {
@@ -98,119 +93,31 @@ router.get('/logout', checkAuthenticated, (req, res) => {
   });
 });
 
-// google sign-in
-
-router.get(
-  '/auth/google',
-  passport.authenticate('google', { scope: ['profile', 'email'] })
-);
-
-router.get(
-  '/auth/google/callback',
-  passport.authenticate('google', { failureRedirect: '/login' }),
-  function (req, res) {
-    //Successful authentication, redirect home.
-    res.redirect('/welcome');
-  }
-);
-
-// facebook sign-in
-
-router.get(
-  '/auth/facebook',
-  passport.authenticate('facebook', { scope: ['email'] })
-);
-
-router.get(
-  '/auth/facebook/callback',
-  passport.authenticate('facebook', { failureRedirect: '/login' }),
-  function (req, res) {
-    // Successful authentication, redirect home.
-    res.redirect('/welcome');
-  }
-);
-
 /*
  ** ------------- Post Routes -------------
  */
 
-// Register route
+// ------- Register route ------- //
+router.post(
+  '/register',
+  validator.validateSignup,
+  validator.validate,
+  authController.registerUser
+);
 
-router.post('/register', validateSignup, validate, async (req, res) => {
-  // If no errors retrieve values of form fields from request body
+// -------- Login route -------- //
 
-  const { email, username, password } = req.body;
+router.post(
+  '/login',
+  validator.validateLogin,
+  validator.validate,
+  authController.loginUser
+);
 
-  // Check if user already exists in database
-  const checkUser = await User.findOne({ email });
+//  send password reset link //
+router.post('/forgot', authController.sendPasswordResetLink);
 
-  if (checkUser) {
-    return res.json({ message: 'Email already registered' });
-  }
-
-  // Create password hash with hash function
-  const salt = await genSalt();
-  const hash = await hashPassword(password, salt);
-
-  // Create user instance from form input
-  const newUser = new User({
-    email,
-    username,
-    password: hash,
-    salt,
-    auth_method: 'traditional'
-  });
-
-  newUser
-    .save()
-    .then(async (user) => {
-      const token = await createToken(process.env.LENGTH);
-      const saveToken = new Token({
-        token,
-        userId: user._id
-      });
-      const verificationLink = `${req.protocol}://${req.hostname}/verify/${token}`;
-      await sendVerifyLink(user, verificationLink);
-      await saveToken.save();
-      res.status(301).redirect('/verify-page');
-    })
-    .catch((err) => console.log(err));
-});
-
-// Login route
-
-router.post('/login', validateLogin, validate, (req, res, next) => {
-  passport.authenticate('local', (err, user, info) => {
-    if (err) {
-      return console.log(err);
-    }
-
-    if (!user && info.message === 'This account uses google login') {
-      const provider = 'google';
-      return res.redirect(
-        `/social-login?message=${info.message}&provide=${provider}`
-      );
-    }
-
-    if (!user && info.message === 'This account uses facebook login') {
-      const provider = 'facebook';
-      return res.redirect(
-        `/social-login?message=${info.message}&provide=${provider}`
-      );
-    }
-
-    if (!user) {
-      // Authentication failed
-      return res.status(400).json({ message: info.message });
-    }
-
-    req.logIn(user, (err) => {
-      if (err) {
-        return next(err);
-      }
-      return res.redirect('/welcome');
-    });
-  })(req, res, next);
-});
+//  send password reset link //
+router.post('/reset/:id', authController.resetUserPassword);
 
 module.exports = router;

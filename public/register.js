@@ -118,5 +118,3 @@ getUsername.addEventListener('input', handleUsername);
 getPassword.addEventListener('input', handlePassword);
 
 signupButton.addEventListener('click', handleSignup);
-
-// Remove event listeners

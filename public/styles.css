@@ -147,7 +147,7 @@ body {
   color: lightslategray;
   position: absolute;
   right: 40px;
-  bottom: 120px;
+  bottom: 150px;
 }
 .toggle:hover {
   cursor: pointer;

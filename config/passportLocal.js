@@ -11,13 +11,13 @@ const passportLocal = new LocalStrategy((username, password, cb) => {
       }
 
       // Check for authentication method
-      if (user.auth_method === 'google') {
-        return cb(null, false, { message: 'This account uses google login' });
+      if (user.auth_method === 'oauth') {
+        return cb(null, false, {
+          message: 'This account uses oauth login',
+          provider: user.provider
+        });
       }
 
-      if (user.auth_method === 'facebook') {
-        return cb(null, false, { message: 'This account uses facebook login' });
-      }
       // Check for password validity
       const isValid = await comparePassword(password, user.password, user.salt);
       if (!isValid) {

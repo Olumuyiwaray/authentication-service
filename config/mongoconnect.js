@@ -9,4 +9,4 @@ const dbConfig = async () => {
     .catch((err) => console.log(err));
 };
 
-module.exports = dbConfig;
+module.exports = { dbConfig, mongoUri };

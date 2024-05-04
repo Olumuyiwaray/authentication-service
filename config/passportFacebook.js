@@ -23,7 +23,8 @@ const passportFacebook = new FacebookStrategy(
       const newUser = await User.create({
         email,
         username,
-        auth_method: 'facebook',
+        auth_method: 'oauth',
+        provider: 'facebook',
         verified: true
       });
       return cb(null, newUser);

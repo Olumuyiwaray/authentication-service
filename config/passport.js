@@ -4,6 +4,11 @@ const passportLocal = require('./passportLocal');
 const passportGoogle = require('./passportGoogle');
 const passportFacebook = require('./passportFacebook');
 
+const initializePassport = (app) => {
+  app.use(passport.initialize());
+  app.use(passport.session());
+};
+
 passport.use(passportLocal);
 passport.use(passportGoogle);
 passport.use(passportFacebook);
@@ -23,3 +28,5 @@ passport.deserializeUser(function (userId, cb) {
     })
     .catch((err) => cb(err));
 });
+
+module.exports = initializePassport;

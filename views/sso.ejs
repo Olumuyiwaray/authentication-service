@@ -10,7 +10,9 @@
   <body>
     <div>
       <p class="message"><%= message %></p>
-      <a class="sso_link" href="/auth/google"> continue with <%= provider %></a>
+      <a class="sso_link" href="/auth/<%= provider %>">
+        continue with <%= provider %></a
+      >
     </div>
   </body>
 </html>

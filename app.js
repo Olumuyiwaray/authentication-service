@@ -1,59 +1,48 @@
-const express = require('express');
-const app = express();
-const bodyParser = require('body-parser');
 require('dotenv').config();
+
+const express = require('express');
+const bodyParser = require('body-parser');
 const session = require('express-session');
-const MongoStore = require('connect-mongo');
+const cors = require('cors');
 const helmet = require('helmet');
-const rateLimiter = require('express-rate-limit');
-const passport = require('passport');
-const dbConfig = require('./config/mongoconnect');
+const compression = require('compression');
+const { dbConfig } = require('./config/mongoconnect');
 const routes = require('./routes/routes');
-const mongoUri = require('./config/config');
+const limiter = require('./config/limiter');
+const helmetOptions = require('./config/helmet');
+const sessionOptions = require('./config/session');
+const initializePassport = require('./config/passport');
+
+const app = express();
 const port = process.env.PORT || 4000;
 
+/**
+ * ------ register view engine ----------
+ */
+app.set('view engine', 'ejs');
+
+/**
+ * ------ configure middlewares ----------
+ */
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static('public'));
-// Register view engine
-
-app.set('view engine', 'ejs');
-
-// Configure request limiter
-const limiter = rateLimiter({
-  windowMs: 15 * 60 * 1000,
-  limit: 100,
-  standardHeaders: 'draft-7',
-  legacyHeaders: false
-});
-
 app.use(limiter);
-app.use(
-  helmet({
-    contentSecurityPolicy: false
-  })
-);
+app.use(cors());
+app.use(helmet(helmetOptions));
+app.use(session(sessionOptions));
+app.use(compression());
 
-// Configure express-sessions
-app.use(
-  session({
-    secret: process.env.SESSION_SECRET,
-    resave: false,
-    saveUninitialized: true,
-    store: MongoStore.create({
-      mongoUrl: mongoUri,
-      ttl: 1 * 24 * 60 * 60,
-      autoRemove: 'native'
-    }),
-    cookie: {
-      secure: false,
-      httpOnly: true,
-      maxAge: 1000 * 60 * 60 * 24
-    }
-  })
-);
+initializePassport(app);
 
-// call database connection
+/**
+ * ------ define routes ----------
+ */
+app.use(routes);
+
+/**
+ * ------- Connect to database before proceeding to listen to requests -------
+ */
 dbConfig()
   .then(() => {
     app.listen(port, () => {
@@ -63,16 +52,3 @@ dbConfig()
   .catch((err) => {
     console.log(err);
   });
-
-require('./config/passport');
-
-app.use(passport.initialize());
-app.use(passport.session());
-
-app.use((req, res, next) => {
-  console.log(req.session);
-  console.log(req.user);
-  next();
-});
-
-app.use(routes);
