@@ -11,7 +11,7 @@ const sessionOptions = {
     autoRemove: 'native'
   }),
   cookie: {
-    secure: process.env.NODE_ENV === 'development' ? false : true,
+    secure: true,
     httpOnly: true,
     maxAge: 1000 * 60 * 60 * 24
   }

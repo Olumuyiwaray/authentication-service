@@ -4,7 +4,7 @@ const { comparePassword } = require('./utils');
 
 const passportLocal = new LocalStrategy((username, password, cb) => {
   // Find user in database using username provided during login
-  User.findOne({ username })
+  User.findOne({ username: { $eq: username } })
     .then(async (user) => {
       if (!user) {
         return cb(null, false, { message: 'Invalid username or password' });

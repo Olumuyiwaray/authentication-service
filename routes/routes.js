@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const passport = require('passport');
-const { checkAuthenticated } = require('../config/utils');
+const { checkAuthStatus } = require('../config/utils');
 const validator = require('../config/validate');
 const authController = require('../controllers/authControllers');
 
@@ -9,42 +9,42 @@ const authController = require('../controllers/authControllers');
  ** ------------- Get Routes -------------
  */
 
-// ------- login page ------- //
+// login page  //
 router.get('/', (req, res) => {
   res.status(200).render('login');
 });
 
-// ------- social login redirect page ------- //
+// social login redirect page //
 router.get('/social-login', (req, res) => {
   const { message, provider } = req.query;
   res.status(200).render('sso', { message, provider });
 });
 
-// ------- dashboard page ------- //
-router.get('/welcome', checkAuthenticated, (req, res) => {
+// dashboard page //
+router.get('/welcome', checkAuthStatus, (req, res) => {
   res.status(200).render('welcome', { username: req.user.username });
 });
 
-// ------- register page ------- //
+// register page //
 router.get('/register', (req, res) => {
   res.status(200).render('register');
 });
 
-// ------- get verify notice page ------- //
+// get verify notice page //
 router.get('/verify-page', (req, res) => {
   res.status(200).render('verify-page');
 });
 
-// ------- Handle email verification ------- //
+// Handle email verification //
 router.get('/verify/:token', authController.verifyUserEmail);
 
-//------- google sign-in -------//
+// google sign-in //
 router.get(
   '/auth/google',
   passport.authenticate('google', { scope: ['profile', 'email'] })
 );
 
-// ------- google SSO callback url ------- //
+// google SSO callback url //
 router.get(
   '/auth/google/callback',
   passport.authenticate('google', { failureRedirect: '/login' }),
@@ -54,7 +54,7 @@ router.get(
   }
 );
 
-//------ facebook sign-in --------//
+// facebook sign-in //
 router.get(
   '/auth/facebook',
   passport.authenticate('facebook', { scope: ['email'] })
@@ -84,7 +84,7 @@ router.get('/reset/:id', (req, res, next) => {
   res.status(200).render('reset', { id });
 });
 
-router.get('/logout', checkAuthenticated, (req, res) => {
+router.get('/logout', checkAuthStatus, (req, res) => {
   req.logout((err) => {
     if (err) {
       console.log(err);
@@ -97,7 +97,7 @@ router.get('/logout', checkAuthenticated, (req, res) => {
  ** ------------- Post Routes -------------
  */
 
-// ------- Register route ------- //
+//  Register route  //
 router.post(
   '/register',
   validator.validateSignup,
@@ -105,7 +105,7 @@ router.post(
   authController.registerUser
 );
 
-// -------- Login route -------- //
+//  Login route  //
 
 router.post(
   '/login',
@@ -115,9 +115,19 @@ router.post(
 );
 
 //  send password reset link //
-router.post('/forgot', authController.sendPasswordResetLink);
+router.post(
+  '/forgot',
+  validator.validateEmail,
+  validator.validate,
+  authController.sendPasswordResetLink
+);
 
-//  send password reset link //
-router.post('/reset/:id', authController.resetUserPassword);
+//  reset user password//
+router.post(
+  '/reset/:id',
+  validator.validatePasswordReset,
+  validator.validate,
+  authController.resetUserPassword
+);
 
 module.exports = router;

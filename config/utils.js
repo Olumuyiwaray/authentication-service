@@ -71,7 +71,7 @@ const sendVerifyLink = async (user, subject, message) => {
   await transporter.sendMail(mailOptions);
 };
 
-const checkAuthenticated = (req, res, next) => {
+const checkAuthStatus = (req, res, next) => {
   if (req.isAuthenticated()) {
     if (req.user.verified) {
       next();
@@ -91,7 +91,7 @@ const generateUsername = async (displayName) => {
   let username = usernameBase;
   let counter = 1;
 
-  while (true) {
+  while (username) {
     const existingUser = await User.findOne({ username });
     if (!existingUser) {
       break;
@@ -109,6 +109,6 @@ module.exports = {
   comparePassword,
   createToken,
   sendVerifyLink,
-  checkAuthenticated,
+  checkAuthStatus,
   generateUsername
 };

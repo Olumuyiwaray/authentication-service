@@ -15,7 +15,7 @@ exports.registerUser = async (req, res, next) => {
   const { email, username, password } = req.body;
 
   //  Check if user already exists in database  //
-  const checkUser = await User.findOne({ email });
+  const checkUser = await User.findOne({ email: { $eq: email } });
 
   // if user exists and auth method is Oauth redirect to sociaal login page  //
   if (checkUser && checkUser.auth_method === 'oauth') {
@@ -63,6 +63,7 @@ exports.registerUser = async (req, res, next) => {
   res.status(301).redirect('/verify-page');
 };
 
+// login handler //
 exports.loginUser = (req, res, next) => {
   passport.authenticate('local', (err, user, info) => {
     if (err) {
@@ -112,11 +113,12 @@ exports.verifyUserEmail = async (req, res, next) => {
   }
 };
 
+// send to user email to verify and routes to password reset page //
 exports.sendPasswordResetLink = async (req, res, next) => {
   const { email } = req.body;
 
   try {
-    const user = await User.findOne({ email });
+    const user = await User.findOne({ email: { $eq: email } });
 
     if (!user) {
       return res.status(404).json({ message: 'Email does not exist' });
@@ -150,7 +152,7 @@ exports.sendPasswordResetLink = async (req, res, next) => {
   }
 };
 
-//
+// verify reset link sent to email //
 exports.verifyPasswordResetLink = async (req, res, next) => {
   const token = req.params.token;
 

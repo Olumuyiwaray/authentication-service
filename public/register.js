@@ -34,7 +34,7 @@ const handleEmail = () => {
 
 const handleUsername = () => {
   const username = document.getElementById('username').value.trim();
-  if (username.length < 6 || username.length > 10) {
+  if (username.length < 6 || username.length > 20) {
     document.getElementById('username_error').innerText =
       'Username must be between 5 to 10 characters';
   } else {
